@@ -11,12 +11,14 @@ class Main(MongoService):
     def start(self):
         revService = ReviewService()
         services = revService.get_all_reviews()
-        print(services)
+
+        text_to_translate = services[10000]['text']
+        print(text_to_translate)
 
         languageTranslator = LanguageTranslator()
-        text_translated = languageTranslator.translate("Nama saya beny")
+        text_translated = languageTranslator.translate(text_to_translate)
 
-        print("Review translated : ", text_translated)
+        print("Review translated : \n", text_translated)
 
 
 if __name__ == "__main__":

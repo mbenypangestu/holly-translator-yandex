@@ -8,7 +8,6 @@ from mongoengine import connect
 from pymongo import MongoClient
 
 from database.mongo_service import MongoService
-from services.review_service import ReviewService
 
 
 class ReviewService(MongoService):
