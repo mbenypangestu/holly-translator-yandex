@@ -1,0 +1,25 @@
+import requests
+import json
+from datetime import datetime
+from time import sleep
+
+from mongoengine import connect
+from pymongo import MongoClient
+
+from database.mongo_service import MongoService
+
+
+class HotelService(MongoService):
+    def __init__(self):
+        super().__init__()
+
+    def get_all_hotels(self):
+        hotels = self.db.hotel.find()
+        return hotels
+
+    def is_hotel_exist(self, hotel_id):
+        hotel = self.db.hotel.find({'id': hotel_id})
+        if hotel.count() > 0:
+            return True
+        else:
+            return False

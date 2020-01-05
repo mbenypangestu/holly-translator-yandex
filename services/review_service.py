@@ -18,8 +18,29 @@ class ReviewService(MongoService):
         reviews = self.db.review.find()
         return reviews
 
-    def is_review_exist(self, reviewId):
-        review = self.db.review.find({'id': reviewId})
+    def get_lessthan_datetime(self, datenow):
+        reviews = self.db.review.aggregate([
+            {
+                '$lookup': {
+                    "from": 'hotel',
+                    "localField": 'hotel_locationID',
+                    "foreignField": 'location_id',
+                    "as": 'hotel_detail'
+                }
+            },
+            {
+                '$match': {
+                    'created_at': {'$lt': datenow}
+                }
+            },
+            {
+                "$unwind": "$hotel_detail"
+            }
+        ])
+        return reviews
+
+    def is_review_exist(self, review_id):
+        review = self.db.review.find({'id': review_id})
         if review.count() > 0:
             return True
         else:

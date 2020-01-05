@@ -2,3 +2,5 @@ request
 mongoengine
 pymongo
 SolrClient
+nltk
+pandas
