@@ -3,6 +3,7 @@ import requests
 import os
 import pandas as pd
 import pprint
+from googletrans import Translator
 
 
 class LanguageTranslator:
@@ -13,7 +14,7 @@ class LanguageTranslator:
         self.languages = pd.read_csv(
             self.path + "/dataset/language_standart.csv")
 
-    def translate(self, text="", src_lang="", target_lang="en"):
+    def translate_yandex(self, text="", src_lang="", target_lang="en"):
         lang = target_lang
 
         if src_lang != "":
@@ -36,3 +37,9 @@ class LanguageTranslator:
 
         text_translated = res_obj['text'][0]
         return text_translated
+
+    def translate_googletrans(self, text="", src_lang="", target_lang="en"):
+        gTranslator = Translator()
+
+        text_translated = gTranslator.translate(text)
+        return text_translated.text
