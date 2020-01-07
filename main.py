@@ -5,8 +5,11 @@ from services.location_service import LocationService
 from services.hotel_service import HotelService
 from services.review_service import ReviewService
 from services.sentiment_review_service import SentimentReviewService
+from services.review_translated_service import ReviewTranslatedService
 from sentiment.sentiment import SentimentAnalyzer
 
+from mongoengine import connect
+from pymongo import MongoClient
 import time
 import datetime
 import json
@@ -21,7 +24,7 @@ class Main(MongoService):
     def start(self):
         datenow = datetime.datetime.now()
         language_translator = LanguageTranslator()
-        sentiment_service = SentimentReviewService()
+        reviewtranslate_service = ReviewTranslatedService()
 
         hotel_service = HotelService()
         review_service = ReviewService()
@@ -35,6 +38,8 @@ class Main(MongoService):
             for j, hotel in enumerate(hotels):
                 reviews = review_service.get_review_by_hotel_locationid(
                     hotel['location_id'])
+                reviewtranslate_on_hotel = reviewtranslate_service.get_review_by_hotel_locid(
+                    hotel['location_id'])
 
                 for r, review in enumerate(reviews):
                     text_to_translate = review['text']
@@ -44,18 +49,28 @@ class Main(MongoService):
                     data = {
                         "hotel": hotel,
                         "review": review,
+                        "location_id": location['location_id'],
+                        "hotel_id": hotel['location_id'],
+                        "review_id": review['id'],
                         "text_to_translate": text_to_translate,
                         "text_translated": text_translated,
-                        "created_at": datetime.datetime.now()
+                        "created_at": datenow
                     }
 
-                    sentiment_service.create(data)
-                    review_service.update_review_byid(
-                        review['id'], {'gtrans_translated': 1})
+                    isexist_review = any(x['review_id'] == review['id']
+                                         for x in reviewtranslate_on_hotel)
+                    if not isexist_review:
+                        reviewtranslate_service.create(data)
+                    else:
+                        print("---> Review (",
+                              review['id'], ") on table Translated Review is already exist")
 
-        # solrService = SolrService()
-        # count = solrService.getCollection("test_review", "test")
-        # print("Count : ", count)
+                    # review_service.update_review_byid(
+                    #     review['id'], {'gtrans_translated': 1})
+
+                # solrService = SolrService()
+                # count = solrService.getCollection("test_review", "test")
+                # print("Count : ", count)
 
 
 if __name__ == "__main__":
