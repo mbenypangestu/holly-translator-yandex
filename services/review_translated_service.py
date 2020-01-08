@@ -24,6 +24,13 @@ class ReviewTranslatedService(MongoService):
         })
         return review_translateds
 
+    def isexist_review_by_hotel_locid(self, hotel_id, review_id):
+        review_translateds = self.db.review_translated.find({
+            'hotel_id': hotel_id,
+            'review_id': {"$in": [review_id]}
+        })
+        return review_translateds
+
     def create(self, review_translated):
         try:
             result = self.db.review_translated.insert_one(

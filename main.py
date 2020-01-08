@@ -38,20 +38,22 @@ class Main(MongoService):
             for j, hotel in enumerate(hotels):
                 reviews = review_service.get_review_by_hotel_locationid(
                     hotel['location_id'])
-                reviewtranslate_on_hotel = reviewtranslate_service.get_review_by_hotel_locid(
-                    hotel['location_id'])
 
                 for r, review in enumerate(reviews):
                     text_to_translate = review['text']
 
                     try:
-                        isexist_review = any(x['review_id'] == review['id']
-                                             for x in reviewtranslate_on_hotel)
-                        if not isexist_review:
-                            # gTranslator = Translator()
-                            language_translator = LanguageTranslator()
-                            text_translated = language_translator.translate_yandex(
-                                text_to_translate)
+                        isexist_review = reviewtranslate_service.isexist_review_by_hotel_locid(
+                            hotel['location_id'], review['id'])
+                        # print(isexist_review)
+                        if isexist_review.count() == 0:
+                            print("-> Review (",
+                                  review['id'], ") on table Translated Review is not exist")
+
+                            gTranslator = Translator()
+                            # language_translator = LanguageTranslator()
+                            text_translated = gTranslator.translate(
+                                text_to_translate).text
 
                             data = {
                                 "hotel": hotel,
