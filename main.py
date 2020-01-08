@@ -14,6 +14,7 @@ import time
 import datetime
 import json
 import pprint
+from googletrans import Translator
 
 
 class Main(MongoService):
@@ -44,9 +45,10 @@ class Main(MongoService):
                 for r, review in enumerate(reviews):
                     text_to_translate = review['text']
 
-                    try :
+                    try:
                         gTranslator = Translator()
-                        text_translated = gTranslator.translate(text_to_translate)
+                        text_translated = gTranslator.translate(
+                            text_to_translate)
 
                         data = {
                             "hotel": hotel,
@@ -60,20 +62,19 @@ class Main(MongoService):
                         }
 
                         isexist_review = any(x['review_id'] == review['id']
-                                            for x in reviewtranslate_on_hotel)
+                                             for x in reviewtranslate_on_hotel)
                         if not isexist_review:
                             reviewtranslate_service.create(data)
                         else:
                             print("---> Review (",
-                                review['id'], ") on table Translated Review is already exist")
-                
+                                  review['id'], ") on table Translated Review is already exist")
+
                         # review_service.update_review_byid(
                         #     review['id'], {'gtrans_translated': 1})
 
-                    except Exception as e :
+                    except Exception as e:
                         print(str("Err : ", e))
                         continue
-
 
                 # solrService = SolrService()
                 # count = solrService.getCollection("test_review", "test")
