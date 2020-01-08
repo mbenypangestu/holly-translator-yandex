@@ -30,13 +30,17 @@ class LanguageTranslator:
             'text': text
         }
 
-        res = requests.post(self._base_url, params=params)
-        res_obj = res.json()
+        try:
+            res = requests.post(self._base_url, params=params)
+            res_obj = res.json()
 
-        pprint.pprint(res_obj)
+            # pprint.pprint(res_obj)
 
-        text_translated = res_obj['text'][0]
-        return text_translated
+            text_translated = res_obj['text'][0]
+            return text_translated
+        except Exception as err:
+            print("-----> Err : ", err)
+            return None
 
     def translate_googletrans(self, text="", src_lang="", target_lang="en"):
         gTranslator = Translator()

@@ -26,9 +26,10 @@ class ReviewTranslatedService(MongoService):
 
     def create(self, review_translated):
         try:
-            result = (self.db.review_translated.insert_one(
-                review_translated)).inserted_id
+            result = self.db.review_translated.insert_one(
+                review_translated).inserted_id
             print("Msg: Success saving data with id ",
                   result, "to Translated review !")
-        except:
+        except Exception as e:
             print("Err: Failed to save result Translated review !")
+            print("------> ", e)

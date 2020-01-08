@@ -24,7 +24,6 @@ class Main(MongoService):
 
     def start(self):
         datenow = datetime.datetime.now()
-        language_translator = LanguageTranslator()
         reviewtranslate_service = ReviewTranslatedService()
 
         hotel_service = HotelService()
@@ -46,39 +45,43 @@ class Main(MongoService):
                     text_to_translate = review['text']
 
                     try:
-                        gTranslator = Translator()
-                        text_translated = gTranslator.translate(
-                            text_to_translate)
-
-                        data = {
-                            "hotel": hotel,
-                            "review": review,
-                            "location_id": location['location_id'],
-                            "hotel_id": hotel['location_id'],
-                            "review_id": review['id'],
-                            "text_to_translate": text_to_translate,
-                            "text_translated": text_translated,
-                            "created_at": datenow
-                        }
-
                         isexist_review = any(x['review_id'] == review['id']
                                              for x in reviewtranslate_on_hotel)
                         if not isexist_review:
-                            reviewtranslate_service.create(data)
+                            # gTranslator = Translator()
+                            language_translator = LanguageTranslator()
+                            text_translated = language_translator.translate_yandex(
+                                text_to_translate)
+
+                            data = {
+                                "hotel": hotel,
+                                "review": review,
+                                "location_id": location['location_id'],
+                                "hotel_id": hotel['location_id'],
+                                "review_id": review['id'],
+                                "text_to_translate": text_to_translate,
+                                "text_translated": text_translated,
+                                "created_at": datenow
+                            }
+                            if text_translated != None:
+                                reviewtranslate_service.create(data)
+                            else:
+                                print(
+                                    str("-----> Err : Failed to translate review !"))
                         else:
                             print("---> Review (",
                                   review['id'], ") on table Translated Review is already exist")
 
-                        # review_service.update_review_byid(
-                        #     review['id'], {'gtrans_translated': 1})
-
-                    except Exception as e:
-                        print(str("Err : ", e))
+                    except Exception as err:
+                        print(str("Err : ", err))
                         continue
 
                 # solrService = SolrService()
                 # count = solrService.getCollection("test_review", "test")
                 # print("Count : ", count)
+
+    def translate_reviews_onhotel(self, hotel):
+        print()
 
 
 if __name__ == "__main__":
