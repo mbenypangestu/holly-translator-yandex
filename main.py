@@ -6,7 +6,6 @@ from services.hotel_service import HotelService
 from services.review_service import ReviewService
 from services.sentiment_review_service import SentimentReviewService
 from services.review_translated_service import ReviewTranslatedService
-from sentiment.sentiment import SentimentAnalyzer
 
 from mongoengine import connect
 from pymongo import MongoClient
@@ -29,7 +28,8 @@ class Main(MongoService):
         hotel_service = HotelService()
         review_service = ReviewService()
         location_service = LocationService()
-        locations = location_service.get_all_locations()
+        # locations = location_service.get_all_locations()
+        locations = location_service.get_locations_indonesia()
 
         for i, location in enumerate(locations):
             hotels = hotel_service.get_hotels_by_locationid(
@@ -47,13 +47,13 @@ class Main(MongoService):
                             hotel['location_id'], review['id'])
                         # print(isexist_review)
                         if isexist_review.count() == 0:
-                            print("-> Review (",
-                                  review['id'], ") on table Translated Review is not exist")
+                            print("[", datetime.datetime.now(), "] Review (",
+                                  review['id'], ") on table Translated Review is not exist. Saving Review ...")
 
-                            gTranslator = Translator()
-                            # language_translator = LanguageTranslator()
-                            text_translated = gTranslator.translate(
-                                text_to_translate).text
+                            # gTranslator = Translator()
+                            language_translator = LanguageTranslator()
+                            text_translated = language_translator.translate_yandex(
+                                text_to_translate)
 
                             data = {
                                 "hotel": hotel,

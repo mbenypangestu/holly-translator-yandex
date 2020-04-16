@@ -1,7 +1,7 @@
 
 import requests
 import json
-from datetime import datetime
+import datetime
 from time import sleep
 
 from mongoengine import connect
@@ -35,8 +35,9 @@ class ReviewTranslatedService(MongoService):
         try:
             result = self.db.review_translated.insert_one(
                 review_translated).inserted_id
-            print("Msg: Success saving data with id ",
+            print("[", datetime.datetime.now(), "] Success saving data with id ",
                   result, "to Translated review !")
         except Exception as e:
-            print("Err: Failed to save result Translated review !")
-            print("------> ", e)
+            print("[", datetime.datetime.now(),
+                  "] Failed to save result Translated review !")
+            print("[", datetime.datetime.now(), "]", e)

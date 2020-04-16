@@ -3,6 +3,7 @@ import requests
 import os
 import pandas as pd
 import pprint
+import datetime
 from googletrans import Translator
 
 
@@ -39,7 +40,7 @@ class LanguageTranslator:
             text_translated = res_obj['text'][0]
             return text_translated
         except Exception as err:
-            print("-----> Err : ", err)
+            print("[", datetime.datetime.now(), "] Err : ", err)
             return None
 
     def translate_googletrans(self, text="", src_lang="", target_lang="en"):
