@@ -71,7 +71,8 @@ class Main(MongoService):
                                 print(
                                     str("-----> Err : Failed to translate review !"))
                         else:
-                            print("---> Review (",
+                            print("[", datetime.datetime.now(),
+                                  "] Review (",
                                   review['id'], ") on table Translated Review is already exist")
 
                     except Exception as err:
